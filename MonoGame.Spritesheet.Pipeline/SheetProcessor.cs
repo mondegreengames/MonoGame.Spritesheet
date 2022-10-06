@@ -53,7 +53,7 @@ namespace MonoGame.Spritesheet.Pipeline
                 }
             }
 
-            var origins = TrimSources(ref sources, input, ColorKeyEnabled ? ColorKeyColor : Color.Transparent, Padding);
+            var origins = TrimSources(ref sources, input, ColorKeyEnabled ? ColorKeyColor : Color.TransparentBlack, Padding);
             var destinations = Packer.Pack(sources);
             //Deflate
             for (int i = 0; i < destinations.Length; i++)
