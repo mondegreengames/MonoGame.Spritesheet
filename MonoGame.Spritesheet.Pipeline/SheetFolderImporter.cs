@@ -19,10 +19,13 @@ namespace MonoGame.Spritesheet.Pipeline
             if (data.FolderPath != null)
                 AddFolderToSpriteList(data.FolderPath, data.Filter, false, null, texImporter, context, textures);
 
-            foreach(var folder in data.Folders)
+            if (data.Folders != null)
             {
-                if (folder.FolderPath != null)
-                    AddFolderToSpriteList(folder.FolderPath, folder.Filter, folder.IncludeSubfolders, null, texImporter, context, textures);
+                foreach (var folder in data.Folders)
+                {
+                    if (folder.FolderPath != null)
+                        AddFolderToSpriteList(folder.FolderPath, folder.Filter, folder.IncludeSubfolders, null, texImporter, context, textures);
+                }
             }
 
             data.Textures = textures.ToArray();

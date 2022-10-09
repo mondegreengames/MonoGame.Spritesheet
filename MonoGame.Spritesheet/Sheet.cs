@@ -16,5 +16,13 @@ namespace MonoGame.Spritesheet
 
         public Vector2 GetOrigin(string name) => Origins[Names[name]];
         public Vector2 GetOrigin(int index) => Origins[index];
+
+        public Sheet(Texture2D texture, IReadOnlyDictionary<string, int> names, IReadOnlyList<Rectangle> sources, IReadOnlyList<Vector2> origins)
+        {
+            Texture = texture;
+            Names = names;
+            Sources = sources;
+            Origins = origins;
+        }
     }
 }
