@@ -7,7 +7,7 @@ Everything you need to load and draw sprites from spritesheets in MonoGame!
 - [MonoGame.Spritesheet.Pipeline](https://www.nuget.org/packages/MonoGame.Spritesheet.Pipeline/)
 
 ## Packed sheet example
-A packed **`Sheet`** is a spritesheet with it's sprites packed together to reduce texture size.
+A packed **`Sheet`** is a spritesheet with its sprites packed together to reduce texture size.
 ```
 spriteBatch.Begin();
 var sheet = Content.Load<Sheet>("MyPackedSheet");
