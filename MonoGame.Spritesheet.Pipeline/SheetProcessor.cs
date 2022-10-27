@@ -53,7 +53,7 @@ namespace MonoGame.Spritesheet.Pipeline
                 }
             }
 
-            var origins = TrimSources(ref sources, input, ColorKeyEnabled ? ColorKeyColor : Color.Transparent, Padding);
+            var originsAndSizes = TrimSources(ref sources, input, ColorKeyEnabled ? ColorKeyColor : Color.Transparent, Padding);
             var destinations = Packer.Pack(sources);
             //Deflate
             for (int i = 0; i < destinations.Length; i++)
@@ -70,28 +70,31 @@ namespace MonoGame.Spritesheet.Pipeline
                 Texture = texture,
                 Names = names,
                 Sources = destinations,
-                Origins = origins
+                Origins = originsAndSizes.Item1,
+                OriginalSizes = originsAndSizes.Item2
             };
 
             context.Logger.LogMessage($"Fillrate: {(double)result.Sources.GetArea() / result.Sources.GetUnionArea()}");
             return result;
         }
 
-        static IReadOnlyList<Vector2> TrimSources(ref Rectangle[] sources, TextureContent texture, Color colorKey, int padding)
+        static (IReadOnlyList<Vector2>, IReadOnlyList<Vector2>) TrimSources(ref Rectangle[] sources, TextureContent texture, Color colorKey, int padding)
         {
             var sourceBitmap = texture.Faces.Single().Single();
             var destinationBitmap = new PixelBitmapContent<Color>(sourceBitmap.Width, sourceBitmap.Height);
             BitmapContent.Copy(sourceBitmap, destinationBitmap);
 
             var origins = new Vector2[sources.Length];
+            var sizes = new Vector2[sources.Length];
             for (int i = 0; i < sources.Length; i++)
             {
                 ref Rectangle src = ref sources[i];
                 origins[i] = -Cropping.TrimRect(ref src, destinationBitmap, colorKey);
+                sizes[i] = new Vector2(sourceBitmap.Width, sourceBitmap.Height);
                 //Inflate
                 src.Inflate(padding, padding);
             }
-            return origins;
+            return (origins, sizes);
         }
 
         static void PackTexture(Rectangle[] sources, Rectangle[] destinations, ref TextureContent texture, int padding)

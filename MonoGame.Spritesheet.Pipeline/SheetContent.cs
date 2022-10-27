@@ -12,5 +12,6 @@ namespace MonoGame.Spritesheet.Pipeline
         public IReadOnlyDictionary<string, int> Names { get; set; }
         public IReadOnlyList<Rectangle> Sources { get; set; }
         public IReadOnlyList<Vector2> Origins { get; set; }
+        public IReadOnlyList<Vector2> OriginalSizes { get; set; }
     }
 }

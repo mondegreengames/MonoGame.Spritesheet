@@ -47,7 +47,7 @@ namespace MonoGame.Spritesheet.Pipeline
                 }
             }
 
-            var origins = TrimSources(ref sources, input.Textures, names, ColorKeyEnabled ? ColorKeyColor : Color.Transparent, Padding);
+            var originsAndSizes = TrimSources(ref sources, input.Textures, names, ColorKeyEnabled ? ColorKeyColor : Color.Transparent, Padding);
             var destinations = Packer.Pack(sources);
             //Deflate
             for (int i = 0; i < destinations.Length; i++)
@@ -64,16 +64,18 @@ namespace MonoGame.Spritesheet.Pipeline
                 Texture = texture,
                 Names = names,
                 Sources = destinations,
-                Origins = origins
+                Origins = originsAndSizes.Item1,
+                OriginalSizes = originsAndSizes.Item2
             };
 
             context.Logger.LogMessage($"Fillrate: {(double)result.Sources.GetArea() / result.Sources.GetUnionArea()}");
             return result;
         }
 
-        static IReadOnlyList<Vector2> TrimSources(ref Rectangle[] sources, IEnumerable<TextureContent> textures, Dictionary<string, int> names, Color colorKey, int padding)
+        static (IReadOnlyList<Vector2>, IReadOnlyList<Vector2>) TrimSources(ref Rectangle[] sources, IEnumerable<TextureContent> textures, Dictionary<string, int> names, Color colorKey, int padding)
         {
             var origins = new List<Vector2>(sources.Length);
+            var sizes = new List<Vector2>(sources.Length);
             foreach (var texture in textures)
             {
                 var sourceBitmap = texture.Faces.Single().Single();
@@ -83,10 +85,11 @@ namespace MonoGame.Spritesheet.Pipeline
                 ref Rectangle src = ref sources[names[texture.Name]];
                 var offset = Cropping.TrimRect(ref src, destinationBitmap, colorKey);
                 origins.Add(-offset);
+                sizes.Add(new Vector2(sourceBitmap.Width, sourceBitmap.Height));
                 //Inflate
                 src.Inflate(padding, padding);
             }
-            return origins;
+            return (origins, sizes);
         }
 
         static Texture2DContent PackTexture(Rectangle[] sources, Rectangle[] destinations, IEnumerable<TextureContent> textures, Dictionary<string, int> names, int padding)
